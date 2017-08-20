@@ -11,3 +11,6 @@ Option Explicit
 
 Public Function Test(iElement As Variant) As Boolean
 End Function
+
+Public Property Get UseFunc() As IFunc
+End Property

@@ -22,18 +22,21 @@ Sub Sample()
     'NameプロパティがLike演算子で"Sheet[0-9]"とマッチするもの
         '「CallByFunc.SetChild」でCallByFuncの結果をもとに次のIFunc呼び出し
     Dim whereLinq As Enumerable
-    Set whereLinq = myLinq.Where(nameFunc.SetChild( _
-                                FCompOp(opLike, "Sheet[0-9]") _
-                            ) _
-                        )
+    Set whereLinq = myLinq.Where(PCompare(nameFunc, opLike, "Sheet[0-9]"))
     
     '全ブックのワークシート一覧
     Dim selectManyLinq As Enumerable
     Set selectManyLinq = Enumerable.From(Workbooks) _
                             .SelectMany(FCallBy("Worksheets", VbGet))
     
+    Debug.Print "----Before Sort----"
     Dim tWs As Excel.Worksheet
     For Each tWs In selectManyLinq
+        Debug.Print tWs.Name
+    Next tWs
+    
+    Debug.Print "----After Sort----"
+    For Each tWs In selectManyLinq.OrderBy(nameFunc)
         Debug.Print tWs.Name
     Next tWs
     
@@ -41,8 +44,3 @@ Sub Sample()
     
 End Sub
 
-
-
-Sub uihwaefiuhpf()
-    Debug.Print Enumerable(ThisWorkbook.Sheets).Count(FCallBy("Name", VbGet).SetChild(FCompOp(opLike, "Sheet*")))
-End Sub

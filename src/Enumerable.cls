@@ -218,7 +218,7 @@ Public Function Any1(Optional ByVal predicate As IPredicate) As Boolean
     
 End Function
 
-Public Function Count(Optional ByVal predicate As IFunc) As Long
+Public Function Count(Optional ByVal predicate As IPredicate) As Long
     If predicate Is Nothing Then
         Let Count = sequence_.Count
         Exit Function
@@ -226,7 +226,7 @@ Public Function Count(Optional ByVal predicate As IFunc) As Long
     
     Dim iter As Variant, cnt As Long
     For Each iter In sequence_
-        If predicate.Exec(iter) Then _
+        If predicate.Test(iter) Then _
             cnt = cnt + 1
         
     Next iter
@@ -277,12 +277,12 @@ Public Function TakeWhile(ByVal predicate As IPredicate) As Enumerable
     ThrowLINQ NotImplementedException
 End Function
 
-Public Function Where(ByVal predicate As IFunc) As Enumerable
+Public Function Where(ByVal predicate As IPredicate) As Enumerable
     Dim newCol As VBA.Collection: Set newCol = New VBA.Collection
     
     Dim iter As Variant
     For Each iter In sequence_
-        If predicate.Exec(iter) Then _
+        If predicate.Test(iter) Then _
             newCol.Add iter
         
     Next iter

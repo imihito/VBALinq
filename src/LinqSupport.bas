@@ -51,8 +51,8 @@ Function CallByNameEx(ByVal iObject As Object, ByVal iProcName As String, ByVal 
     End If
 End Function
 
-'CompareOperator用
-    'CompareOperatorの構成が決まっていないので一旦外に
+'ComparePredicate用
+    'ComparePredicateの構成が決まっていないので一旦外に
 Function NewRegExp( _
                  ByVal iPattern As String, _
         Optional ByVal iGlobal As Boolean, _

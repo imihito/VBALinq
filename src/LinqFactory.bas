@@ -18,12 +18,13 @@ Public Function FCallBy( _
     
 End Function
 
-Public Function FCompOp( _
+Public Function PCompare( _
+        ByVal iUseFunc As IFunc, _
         ByVal iOperator As CompareOperators, _
         ByVal iExpresion As Variant _
-    ) As CompareOperator
+    ) As ComparePredicate
     
-    With New CompareOperator
-        Set FCompOp = .Init(iOperator, iExpresion)
-    End With 'New CompareOperator
+    With New ComparePredicate
+        Set PCompare = .Init(iUseFunc, iOperator, iExpresion)
+    End With 'New ComparePredicate
 End Function
