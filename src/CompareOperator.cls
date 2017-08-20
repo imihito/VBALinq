@@ -33,11 +33,13 @@ Public Enum CompareOperators
     opIsNot     ' Is = False
 End Enum
 
-'スコープ適当。読み取り専用プロパティにする予定
-Public Operator As CompareOperators
-Public Expression As Variant
+Private operator_ As CompareOperators
+Private expression_ As Variant
 
 Private clsRegExp As VBScript_RegExp_55.RegExp
+
+Public Property Get Operator() As CompareOperators:     Let Operator = operator_:       End Property
+Public Property Get Expression() As Variant:            Let Expression = expression_:   End Property
 
 Friend Function Init( _
         ByVal iOperator As CompareOperators, _
@@ -54,28 +56,28 @@ Friend Function Init( _
     
     Select Case iOperator
         Case opEq, opNe
-            Expression = iExpresion
+            expression_ = iExpresion
             
         Case opLt, opLe
-            Expression = iExpresion
+            expression_ = iExpresion
             
         Case opGt, opGe
-            Expression = iExpresion
+            expression_ = iExpresion
             
         Case opLike, opNotLike
-            Expression = iExpresion
+            expression_ = iExpresion
             
         Case opiMatch, opiNotMatch
             Set clsRegExp = NewRegExp(iExpresion, iIgnoreCase:=True)
-            Expression = iExpresion
+            expression_ = iExpresion
             
         Case opcMatch, opcNotMatch
             Set clsRegExp = NewRegExp(iExpresion, iIgnoreCase:=False)
-            Expression = iExpresion
+            expression_ = iExpresion
             
         Case opIs, opIsNot
             If Not VBA.IsObject(iExpresion) Then ThrowLINQ ArgumentException
-            Set Expression = iExpresion
+            Set expression_ = iExpresion
             
         Case Else
             ThrowLINQ ArgumentException
@@ -83,7 +85,7 @@ Friend Function Init( _
     End Select
     
     
-    Let Me.Operator = iOperator
+    Let operator_ = iOperator
     Set Init = Me
     
 End Function
@@ -95,31 +97,31 @@ End Sub
 Private Function IFunc_Exec(iElement As Variant) As Variant
     Dim rslt As Boolean
     
-    Select Case Me.Operator
+    Select Case operator_
         Case opEq, opNe
-            rslt = ((iElement = Expression) = (Me.Operator = opEq))
+            rslt = ((iElement = expression_) = (operator_ = opEq))
             
         Case opLt, opLe
-            rslt = (iElement < Expression)
-            If (rslt = False) And (Me.Operator = opLe) Then _
-                rslt = (iElement = Expression)
+            rslt = (iElement < expression_)
+            If (rslt = False) And (operator_ = opLe) Then _
+                rslt = (iElement = expression_)
             
         Case opGt, opGe
-            rslt = (iElement > Expression)
-            If (rslt = False) And (Me.Operator = opGe) Then _
-                rslt = (iElement = Expression)
+            rslt = (iElement > expression_)
+            If (rslt = False) And (operator_ = opGe) Then _
+                rslt = (iElement = expression_)
             
         Case opLike, opNotLike
-            rslt = ((iElement Like Expression) = (Me.Operator = opLike))
+            rslt = ((iElement Like expression_) = (operator_ = opLike))
             
         Case opiMatch, opiNotMatch
-            rslt = ((clsRegExp.Test(iElement)) = (Me.Operator = opiMatch))
+            rslt = ((clsRegExp.Test(iElement)) = (operator_ = opiMatch))
             
         Case opcMatch, opcNotMatch
-            rslt = ((clsRegExp.Test(iElement)) = (Me.Operator = opcNotMatch))
+            rslt = ((clsRegExp.Test(iElement)) = (operator_ = opcNotMatch))
             
         Case opIs, opIsNot
-            rslt = ((iElement Is Expression) = (Me.Operator = opIsNot))
+            rslt = ((iElement Is expression_) = (operator_ = opIsNot))
             
     End Select
     
