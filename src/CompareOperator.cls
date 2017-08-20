@@ -39,19 +39,16 @@ Public Expression As Variant
 
 Private clsRegExp As VBScript_RegExp_55.RegExp
 
-    
-Public Function Init( _
+Friend Function Init( _
         ByVal iOperator As CompareOperators, _
         ByVal iExpresion As Variant _
     ) As CompareOperator
-Attribute Init.VB_UserMemId = 0
 'Attribute Init.VB_UserMemId = 0
-
-
+    
     If Me Is CompareOperator Then
         With New CompareOperator
             Set Init = .Init(iOperator, iExpresion)
-        End With
+        End With 'New CompareOperator
         Exit Function
     End If
     

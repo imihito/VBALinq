@@ -13,53 +13,37 @@ Implements IFunc
 Option Explicit
 
 'スコープ適当。Argumentsをどんな形で見せるか…
-Private clsMemberName As String
-Private clsCallType As VBA.VbCallType
-Private clsArguments() As Variant
-Private clsChildCallBack As IFunc
+Private memberName_ As String
+Private callType_ As VBA.VbCallType
+Private arguments_() As Variant
+Private childFunc_ As IFunc
 
-Property Get MemberName() As String:        Let MemberName = clsMemberName:         End Property
-Property Get CallType() As VBA.VbCallType:  Let CallType = clsCallType:             End Property
-Function Arguments() As Variant:       Let Arguments = clsArguments:           End Function
-Property Get ChildCallBack() As IFunc:  Set ChildCallBack = clsChildCallBack:   End Property
-Property Set ChildCallBack(ByVal iCB As IFunc): Set clsChildCallBack = iCB:     End Property
+Property Get MemberName() As String:        Let MemberName = memberName_:   End Property
+Property Get CallType() As VBA.VbCallType:  Let CallType = callType_:       End Property
+Property Get Arguments() As Variant:        Let Arguments = arguments_:     End Property
+Property Get ChildFunc() As IFunc:  Set ChildFunc = childFunc_:             End Property
+Property Set ChildFunc(ByVal func As IFunc): Set childFunc_ = func:         End Property
 
 'コンストラクタ・既定のプロシージャ
-    '既定のインスタンスを使って
-        'CallByFunc( ～
-    'と使用することを想定
 
-
-Public Function Init( _
-             ByVal iMemeberName As String, _
-             ByVal iCallType As VBA.VbCallType, _
-        ParamArray iArgs() As Variant _
+Friend Function Init( _
+        ByVal iMemeberName As String, _
+        ByVal iCallType As VBA.VbCallType, _
+        ByRef iArgs() As Variant _
     ) As CallByFunc
-Attribute Init.VB_UserMemId = 0
-'
-
 'Attribute Init.VB_UserMemId = 0
     If Me Is CallByFunc Then
-        Dim callArgs() As Variant
-        ReDim callArgs(LBound(iArgs) To UBound(iArgs) + 2)
-        callArgs(0) = iMemeberName: callArgs(1) = iCallType
-        Dim i As Long
-        For i = 2 To UBound(callArgs)
-            callArgs(i) = iArgs(i - 2)
-        Next i
-        
-        Dim tCallByFunc As CallByFunc
-        Set tCallByFunc = New CallByFunc
-        Set Init = CallByNameEx(tCallByFunc, "Init", VbMethod, callArgs)
-        Exit Function
+        With New CallByFunc
+            Set Init = .Init(iMemeberName, iCallType, iArgs)
+        End With 'New CallByFunc
     Else
-    
         Static alreadyInit As Boolean
-        If alreadyInit Then Err.Raise 17
+        If alreadyInit Then _
+            ThrowLINQ InvalidOperationException
         
-        Let clsMemberName = iMemeberName
-        Let clsCallType = iCallType
-        Let clsArguments = iArgs
+        Let memberName_ = iMemeberName
+        Let callType_ = iCallType
+        Let arguments_ = iArgs
         
         Let alreadyInit = True
         
@@ -67,19 +51,28 @@ Attribute Init.VB_UserMemId = 0
     End If
 End Function
 
-Function SetChild(ByVal callBack As IFunc) As CallByFunc
-    Set clsChildCallBack = callBack
+Function SetChild(ByVal func As IFunc) As CallByFunc
+    Set childFunc_ = func
     Set SetChild = Me
+End Function
+
+Function RemoveChild() As CallByFunc
+    Set childFunc_ = Nothing
+    Set RemoveChild = Me
+End Function
+
+Function AsIFunc() As IFunc
+    Set AsIFunc = Me
 End Function
 
 Private Function IFunc_Exec(iElement As Variant) As Variant
     Dim tmp As Variant
-    AssignVal tmp, CallByNameEx(iElement, clsMemberName, clsCallType, clsArguments)
+    AssignVal tmp, CallByNameEx(iElement, memberName_, callType_, arguments_)
     
-    If clsChildCallBack Is Nothing Then
+    If childFunc_ Is Nothing Then
         AssignVal IFunc_Exec, tmp
     Else
-        AssignVal IFunc_Exec, clsChildCallBack.Exec(tmp)
+        AssignVal IFunc_Exec, childFunc_.Exec(tmp)
     End If
 End Function
 
