@@ -78,8 +78,38 @@ End Function
 Sub ThrowLINQ(ByVal iErrNo As LinqErrNumber)
     Select Case iErrNo
         Case NotImplementedException
-            Err.Raise iErrNo, , "機能がまだ実装されていません。"
+            Err.Raise iErrNo, , "機能がまだ実装されていません。" & vbNewLine & "NotImplemented"
         Case Else
             Err.Raise iErrNo
     End Select
 End Sub
+
+Function InsertToHead( _
+             ByVal iBaseArray As Variant, _
+        ParamArray iInsertElements() As Variant _
+    ) As Variant
+    
+    Const ARRAY_BASE& = 0
+    
+    If LBound(iBaseArray) <> ARRAY_BASE Then _
+        ThrowLINQ IndexOutOfRangeException
+    
+    Dim insertCnt As Long
+    insertCnt = UBound(iInsertElements) + 1
+    
+    ReDim Preserve iBaseArray(ARRAY_BASE To UBound(iBaseArray) + insertCnt)
+    
+    Dim i As Long
+    For i = UBound(iBaseArray) - insertCnt To ARRAY_BASE Step -1
+        AssignVal iBaseArray(i + insertCnt), iBaseArray(i)
+    Next i
+    
+    For i = ARRAY_BASE To insertCnt - 1
+        AssignVal iBaseArray(i), iInsertElements(i)
+    Next i
+    
+    Let InsertToHead = iBaseArray
+    
+End Function
+
+

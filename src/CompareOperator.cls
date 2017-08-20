@@ -6,7 +6,7 @@ Attribute VB_Name = "CompareOperator"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
-Attribute VB_Exposed = False
+Attribute VB_Exposed = True
 '演算子による比較用クラス
     '大分汚いのできれいにしたいけれど…
 

@@ -1,13 +1,14 @@
 Attribute VB_Name = "ManagementTool"
 Option Explicit
 
-Private Enum vbext_ComponentType 'VBIDE
+'VBIDE.vbext_ComponentType Enum
+Private Enum vbext_ComponentType
     vbext_ct_StdModule = 1
-    vbext_ct_ClassModule
-    vbext_ct_MSForm
+    vbext_ct_ClassModule '= 2
+    vbext_ct_MSForm '= 3
 End Enum
 
-Sub ExportModule()
+Private Sub ExportModules()
     
     Dim fso As Object 'As Scripting.FileSystemObject
     Set fso = CreateObject("Scripting.FileSystemObject")
@@ -41,4 +42,5 @@ Sub ExportModule()
             Call tmpModule.Export(fso.BuildPath(exportDir, tmpModule.Name & extensionDic.Item(tmpModule.Type)))
         End If
     Next tmpModule
+    
 End Sub

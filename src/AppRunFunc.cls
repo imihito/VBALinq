@@ -6,7 +6,7 @@ Attribute VB_Name = "AppRunFunc"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = False
+Attribute VB_Exposed = True
 Implements IFunc
 Option Explicit
 
