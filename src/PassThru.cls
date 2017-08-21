@@ -22,3 +22,6 @@ End Function
 Private Property Get IPredicate_UseFunc() As IFunc
     Set IPredicate_UseFunc = Nothing
 End Property
+
+Public Function AsIFunc() As IFunc: Set AsIFunc = Me: End Function
+Public Function AsIPredicate() As IPredicate: Set AsIPredicate = Me: End Function

@@ -93,9 +93,7 @@ Friend Function Init( _
     
 End Function
 
-Public Function AsIPredicate() As IPredicate
-    Set AsIPredicate = Me
-End Function
+Public Function AsIPredicate() As IPredicate: Set AsIPredicate = Me: End Function
 
 Private Sub Class_Terminate()
     Set regex_ = Nothing
@@ -147,3 +145,25 @@ End Function
 Private Property Get IPredicate_UseFunc() As IFunc
     Set IPredicate_UseFunc = Me.UseFunc
 End Property
+
+Private Function NewRegExp( _
+                 ByVal iPattern As String, _
+        Optional ByVal iGlobal As Boolean, _
+        Optional ByVal iIgnoreCase As Boolean, _
+        Optional ByVal iMultiLine As Boolean _
+    ) As Object 'As VBScript_RegExp_55.RegExp
+    
+    Dim tmpRegEx As Object 'As VBScript_RegExp_55.RegExp
+    Set tmpRegEx = VBA.CreateObject("VBScript.RegExp")
+    
+    With tmpRegEx
+        .Pattern = iPattern
+        .Global = iGlobal
+        .IgnoreCase = iIgnoreCase
+        .MultiLine = iMultiLine
+    End With    'tmpRegEx
+    
+    Set NewRegExp = tmpRegEx
+    
+End Function
+

@@ -51,19 +51,17 @@ Friend Function Init( _
     End If
 End Function
 
-Function SetChild(ByVal func As IFunc) As CallByFunc
+Public Function SetChild(ByVal func As IFunc) As CallByFunc
     Set childFunc_ = func
     Set SetChild = Me
 End Function
 
-Function RemoveChild() As CallByFunc
+Public Function RemoveChild() As CallByFunc
     Set childFunc_ = Nothing
     Set RemoveChild = Me
 End Function
 
-Function AsIFunc() As IFunc
-    Set AsIFunc = Me
-End Function
+Public Function AsIFunc() As IFunc: Set AsIFunc = Me: End Function
 
 Private Function IFunc_Exec(iElement As Variant) As Variant
     Dim tmp As Variant
@@ -75,6 +73,3 @@ Private Function IFunc_Exec(iElement As Variant) As Variant
         AssignVal IFunc_Exec, childFunc_.Exec(tmp)
     End If
 End Function
-
-
-

@@ -29,3 +29,5 @@ End Function
 Friend Function Init(ByVal iProcName As String, ParamArray iArgs() As Variant) As AppRunFunc
     ThrowLINQ NotImplementedException
 End Function
+
+Public Function AsIFunc() As IFunc: Set AsIFunc = Me: End Function
