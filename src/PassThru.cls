@@ -8,8 +8,17 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Implements IFunc
+Implements IPredicate
 Option Explicit
 
 Private Function IFunc_Exec(iElement As Variant) As Variant
     AssignVal IFunc_Exec, iElement
 End Function
+
+Private Function IPredicate_Test(iElement As Variant) As Boolean
+    Let IPredicate_Test = VBA.CBool(iElement)
+End Function
+
+Private Property Get IPredicate_UseFunc() As IFunc
+    Set IPredicate_UseFunc = Nothing
+End Property

@@ -93,6 +93,10 @@ Friend Function Init( _
     
 End Function
 
+Public Function AsIPredicate() As IPredicate
+    Set AsIPredicate = Me
+End Function
+
 Private Sub Class_Terminate()
     Set regex_ = Nothing
     Set useFunc_ = Nothing

@@ -159,12 +159,12 @@ End Function
 
 ''IFuncÇ…àÀë∂Ç∑ÇÈèàóùåQ
 
-Public Function OrderBy(ByVal func As IFunc) As Enumerable
-    Set OrderBy = Enumerable.From(MergeSort(sequence_, func, True))
+Public Function OrderBy(ByVal keyFunc As IFunc) As Enumerable
+    Set OrderBy = Enumerable.From(MergeSort(sequence_, keyFunc, True))
 End Function
 
-Public Function OrderByDescending(ByVal func As IFunc) As Enumerable
-    Set OrderByDescending = Enumerable.From(MergeSort(sequence_, func, False))
+Public Function OrderByDescending(ByVal keyFunc As IFunc) As Enumerable
+    Set OrderByDescending = Enumerable.From(MergeSort(sequence_, keyFunc, False))
 End Function
 
 'SelectÇ™ó\ñÒåÍÇ»ÇÃÇ≈Select1
@@ -204,7 +204,11 @@ End Sub
 ''IPredicateÇ…àÀë∂Ç∑ÇÈèàóùåQ
  
 Public Function All(ByVal predicate As IPredicate) As Boolean
-    ThrowLINQ NotImplementedException
+    Dim iter As Variant
+    For Each iter In sequence_
+        If Not predicate.Test(iter) Then Exit Function
+    Next iter
+    Let All = True
 End Function
 
 'AnyÇÕó\ñÒåÍ
@@ -214,7 +218,13 @@ Public Function Any1(Optional ByVal predicate As IPredicate) As Boolean
         Exit Function
     End If
     
-    ThrowLINQ NotImplementedException
+    Dim iter As Variant
+    For Each iter In sequence_
+        If predicate.Test(iter) Then
+            Let Any1 = True
+            Exit Function
+        End If
+    Next iter
     
 End Function
 
@@ -241,7 +251,15 @@ Public Function First(Optional ByVal predicate As IPredicate) As Variant
         Exit Function
     End If
     
-    ThrowLINQ NotImplementedException
+    Dim iter As Variant
+    For Each iter In sequence_
+        If predicate.Test(iter) Then
+            AssignVal First, iter
+            Exit Function
+        End If
+    Next iter
+    
+    ThrowLINQ IndexOutOfRangeException
     
 End Function
 
@@ -251,7 +269,20 @@ Public Function Last(Optional ByVal predicate As IPredicate) As Variant
         Exit Function
     End If
     
-    ThrowLINQ NotImplementedException
+    Dim lastFind As Variant, isFind As Boolean
+    Dim iter As Variant
+    For Each iter In sequence_
+        If predicate.Test(iter) Then
+            isFind = True
+            AssignVal lastFind, iter
+        End If
+    Next iter
+    
+    If isFind Then
+        AssignVal Last, lastFind
+    Else
+        ThrowLINQ NotImplementedException
+    End If
     
 End Function
 
@@ -265,16 +296,57 @@ Public Function Single1(Optional ByVal predicate As IPredicate) As Variant
         End If
     End If
     
-    ThrowLINQ NotImplementedException
+    Dim isFind As Boolean
+    Dim iter As Variant
+    For Each iter In sequence_
+        If predicate.Test(iter) Then
+            If Not isFind Then
+                isFind = True
+                AssignVal Single1, iter
+            Else
+                ThrowLINQ IndexOutOfRangeException
+            End If
+        End If
+    Next iter
     
 End Function
 
 Public Function SkipWhile(ByVal predicate As IPredicate) As Enumerable
-    ThrowLINQ NotImplementedException
+    Dim newCol As VBA.Collection: Set newCol = New VBA.Collection
+    
+    Dim skipEnd As Boolean
+    Dim iter As Variant
+    For Each iter In sequence_
+        
+        If skipEnd Then
+            newCol.Add iter
+        Else
+            If Not predicate.Test(iter) Then
+                skipEnd = True
+                newCol.Add iter
+            End If
+        End If
+        
+    Next iter
+    
+    Set SkipWhile = Enumerable.From(newCol)
+    
 End Function
 
 Public Function TakeWhile(ByVal predicate As IPredicate) As Enumerable
-    ThrowLINQ NotImplementedException
+    Dim newCol As VBA.Collection: Set newCol = New VBA.Collection
+    
+    Dim iter As Variant
+    For Each iter In sequence_
+        
+        If Not predicate.Test(iter) Then Exit For
+        
+        newCol.Add iter
+        
+    Next iter
+    
+    Set TakeWhile = Enumerable.From(newCol)
+    
 End Function
 
 Public Function Where(ByVal predicate As IPredicate) As Enumerable
@@ -289,9 +361,3 @@ Public Function Where(ByVal predicate As IPredicate) As Enumerable
     
     Set Where = Enumerable.From(newCol)
 End Function
-
-
-
-
-
-
